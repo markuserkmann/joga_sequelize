@@ -1,24 +1,28 @@
 require("dotenv").config();
-const PORT = process.env.PORT;
 
 const express = require("express");
-const app = express();
-
 const sequelize = require("./database");
 
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log("sql init success");
-  })
-  .catch((err) => {
-    console.log("error", err);
-  });
+const app = express();
+const PORT = process.env.PORT;
 
-app.get("/", (req, res) => {
-  res.send("ok");
-});
+const articleRoutes = require("./routes/article");
 
-app.listen(PORT, () => {
-  console.log(`Server started on http://localhost:${PORT}`);
-});
+
+app.use(express.json());
+app.use("/", articleRoutes);
+
+async function startServer() {
+  try {
+    await sequelize.authenticate();
+    console.log("SQL connection successful");
+
+    app.listen(PORT, () => {
+      console.log(`Server started on http://localhost:${PORT}`);
+    });
+  } catch (err) {
+    console.error("SQL connection failed:", err);
+  }
+}
+
+startServer();
