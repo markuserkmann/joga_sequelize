@@ -1,8 +1,35 @@
 const sequelize = require("../database");
-const Article = require("../models/article");
+const { Article, Author } = require("../models");
 
 async function seedArticle() {
   await sequelize.authenticate();
+  await Author.sync({ alter: true });
+
+  const authors = [
+    {
+      id: 1,
+      name: "Mia Thompson",
+      image: "https://merk.ee",
+    },
+    {
+      id: 2,
+      name: "Oliver Brooks",
+      image: "https://merk.ee",
+    },
+    {
+      id: 3,
+      name: "Sofia Carter",
+      image: "https://merk.ee",
+    },
+  ];
+
+  for (const author of authors) {
+    await Author.findOrCreate({
+      where: { id: author.id },
+      defaults: author,
+    });
+  }
+
   await Article.sync({ alter: true });
 
   const articles = [
@@ -28,7 +55,7 @@ async function seedArticle() {
       image: "https://merk.ee",
       body: "This is the third mock article.",
       published: null,
-      author_id: 2,
+      author_id: 3,
     },
   ];
 
@@ -39,7 +66,6 @@ async function seedArticle() {
     });
   }
 
-  console.log(`Article table synced and seeded with ${articles.length} mock rows.`);
 }
 
 seedArticle()

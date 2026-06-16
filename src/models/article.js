@@ -1,7 +1,12 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../database");
+const Author = require("./author");
 
-class Article extends Model {}
+class Article extends Model {
+  static associate(models) {
+    this.belongsTo(models.Author, { foreignKey: "author_id" });
+  }
+}
 
 Article.init(
   {
@@ -34,6 +39,10 @@ Article.init(
     author_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      references: {
+        model: Author,
+        key: "id",
+      },
     },
   },
   {
